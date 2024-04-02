@@ -23,7 +23,6 @@
 
         {% for folder in photos.keys() %}
         <div class="mb-3">
-            <!-- Use Bootstrap button classes for styling -->
             <button class="btn btn-primary" type="button" data-toggle="collapse" data-target="#{{ folder }}-options" aria-expanded="false" aria-controls="{{ folder }}-options">
                 {{ folder.capitalize() }}
             </button>
@@ -31,10 +30,10 @@
                 <div class="card card-body mt-3">
                     <form action="/upload/{{ folder }}" method="post" enctype="multipart/form-data" class="mb-3">
                         <div class="custom-file">
-                            <input type="file" class="custom-file-input" name="photo" id="customFile{{ folder }}">
-                            <label class="custom-file-label" for="customFile{{ folder }}">Choose file</label>
+                            <input type="file" class="custom-file-input" name="photo" id="customFile{{ folder }}" onchange="fileSelected('customFile{{ folder }}', 'labelFor{{ folder }}', 'uploadButton{{ folder }}')">
+                            <label class="custom-file-label" for="customFile{{ folder }}" id="labelFor{{ folder }}">Choose file</label>
                         </div>
-                        <button type="submit" class="btn btn-success mt-2">Upload to {{ folder.capitalize() }}</button>
+                        <button type="submit" id="uploadButton{{ folder }}" class="btn btn-success mt-2" disabled>Upload to {{ folder.capitalize() }}</button>
                     </form>
                     <button onclick="window.location.href='/view_album/{{ folder }}'" class="btn btn-primary btn-sm">View Album</button>
                 </div>
@@ -43,15 +42,28 @@
         {% endfor %}
     </div>
 
+    <script>
+        // Function to enable the upload button and display the filename
+        function fileSelected(fileInputId, labelId, uploadButtonId) {
+            const fileInput = document.getElementById(fileInputId);
+            const label = document.getElementById(labelId);
+            const uploadButton = document.getElementById(uploadButtonId);
+            
+            if (fileInput.files.length > 0) {
+                label.textContent = fileInput.files[0].name; // Display the selected file name
+                uploadButton.disabled = false; // Enable the upload button
+                uploadButton.classList.remove('btn-success');
+                uploadButton.classList.add('btn-success'); // Make sure the button is green
+            } else {
+                uploadButton.disabled = true; // Keep the upload button disabled if no file is selected
+            }
+        }
+    </script>
+
+
     <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.2/dist/umd/popper.min.js"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
-    <script>
-        function fileSelected(folder) {
-            var fileInput = document.getElementById('fileInput' + folder);
-            var uploadButton = document.getElementById('uploadButton' + folder);
-            uploadButton.disabled = !fileInput.files.length;
-        }
-    </script>
+    
 </body>
 </html>
