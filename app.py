@@ -43,13 +43,13 @@ def upload_file(folder_name):
 
     file = request.files['photo']
     if file.filename == '' or not allowed_file(file.filename):
-        flash('No selected file or file type not allowed')
+        flash('No selected file or file type not allowed', 'danger')
         return redirect(url_for('index'))
 
     filename = secure_filename(file.filename)
     save_path = os.path.join(app.config['UPLOAD_FOLDER'], folder_name, filename)
     file.save(save_path)
-    flash(f'File successfully uploaded to {folder_name}')
+    flash(f'File {filename} was uploaded successfully', 'success')  # Flash success message
     return redirect(url_for('index'))
 
 @app.route('/admin', methods=['GET', 'POST'])

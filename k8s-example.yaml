@@ -1,0 +1,50 @@
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: photoapp-pv
+spec:
+  capacity:
+    storage: 100Gi
+  accessModes:
+    - ReadWriteOnce
+  persistentVolumeReclaimPolicy: Retain
+  hostPath:
+    path: /mnt/photoapp/
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: photoapp-pvc
+spec:
+  accessModes:
+    - ReadWriteMany
+  resources:
+    requests:
+      storage: 100Gi
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: photoapp
+spec:
+  selector:
+    matchLabels:
+      app: photoapp
+  template:
+    metadata:
+      labels:
+        app: photoapp
+    spec:
+      containers:
+      - name: photoapp
+        image: photoapp:latest
+        ports:
+        - containerPort: 7043
+        volumeMounts:
+        - mountPath: "/app/uploads"
+          name: photo-storage
+      volumes:
+      - name: photo-storage
+        persistentVolumeClaim:
+          claimName: photoapp-pvc
+
