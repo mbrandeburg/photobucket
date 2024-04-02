@@ -18,8 +18,12 @@
         <button class="btn btn-primary" onclick="window.location.reload();">Refresh Page</button>
         <p></p>
 
-        <h1 class="mb-4">Album: {{ folder.capitalize() }}</h1>
-        
+        {% if folder == 'BCN' %}
+            <h1 class="mb-4">Album: {{ folder }}</h1>
+        {% else %}
+            <h1 class="mb-4">Album: {{ folder.capitalize() }}</h1>
+        {% endif %}
+
         <!-- Photos are displayed here -->
         <div class="row" id="photoList"> <!-- Update this ID to match the JS function -->
             {% for file in files %}

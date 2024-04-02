@@ -13,7 +13,12 @@
         <h1 class="mb-4">Manage Photos</h1>
         {% for folder, files in files.items() %}
         <div class="mb-3">
-            <h2>{{ folder.capitalize() }}</h2>
+            {% if folder == 'BCN' %}
+                <h2>{{ folder }}</h2>
+            {% else %}
+                <h2>{{ folder.capitalize() }}</h2>
+            {% endif %}
+            
             {% if files %}
             <div class="row">
                 {% for file in files %}

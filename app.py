@@ -5,10 +5,10 @@ import os
 # Flask app configuration
 app = Flask(__name__)
 app.config['SECRET_KEY'] = os.environ['PHOTOBUCKET_ADMIN']
-# app.config['UPLOAD_FOLDER'] = 'uploads' # local testing
-app.config['UPLOAD_FOLDER'] = '/mnt/uploads'
+app.config['UPLOAD_FOLDER'] = 'uploads' # local testing
+# app.config['UPLOAD_FOLDER'] = '/mnt/uploads'
 app.config['ALLOWED_EXTENSIONS'] = {'png', 'jpg', 'jpeg', 'gif', 'heif', 'hevc', 'mp4', 'mov', 'avi'}
-app.config['SUBFOLDERS'] = ['BCN', 'rehearsal', 'wedding']
+app.config['SUBFOLDERS'] = ['BCN', 'rehearsal', 'reception']
 
 # Helper function to check allowed file extensions
 def allowed_file(filename):
