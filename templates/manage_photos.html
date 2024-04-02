@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta viewport="width=device-width, initial-scale=1.0">
+    <title>Manage Photos</title>
+</head>
+<body>
+    <h1>Manage Photos</h1>
+    <ul>
+        {% for file in files %}
+            <li>
+                {{ file }}
+                - <a href="{{ url_for('delete_photo', filename=file) }}">Delete</a>
+            </li>
+        {% endfor %}
+    </ul>
+    <a href="/admin">Logout</a>
+    {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+            {% for category, message in messages %}
+                <div>{{ message }}</div>
+            {% endfor %}
+        {% endif %}
+    {% endwith %}
+</body>
+</html>

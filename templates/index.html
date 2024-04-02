@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Photo Upload</title>
+</head>
+<body>
+    <h1>Upload to Rehearsal Folder</h1>
+    <form action="/upload" method="post" enctype="multipart/form-data">
+        <input type="file" name="photo">
+        <input type="submit" value="Upload">
+    </form>
+    <h2>Available Photos</h2>
+    <ul>
+        {% for file in files %}
+            <li>
+                <a href="{{ url_for('uploaded_file', filename=file) }}">{{ file }}</a>
+            </li>
+        {% endfor %}
+    </ul>
+</body>
+</html>
