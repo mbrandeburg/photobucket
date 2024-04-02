@@ -11,14 +11,17 @@
 </head>
 <body>
     <div class="container mt-5">
-        <!-- Button using Bootstrap styling -->
+        <!-- Back to Albums button -->
         <a href="/" class="btn btn-secondary mt-3">Back to Albums</a>
         <p></p>
+        <!-- Refresh Page button -->
         <button class="btn btn-primary" onclick="window.location.reload();">Refresh Page</button>
-
         <p></p>
+
         <h1 class="mb-4">Album: {{ folder.capitalize() }}</h1>
-        <div class="row">
+        
+        <!-- Photos are displayed here -->
+        <div class="row" id="photoList"> <!-- Update this ID to match the JS function -->
             {% for file in files %}
             <div class="col-md-4 mb-4">
                 <div class="card">
@@ -37,29 +40,29 @@
         </div>
     </div>
 
-    <!-- Optional: Include Bootstrap JS for any Bootstrap components you use -->
+    <!-- Bootstrap JS -->
     <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.2/dist/umd/popper.min.js"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
 
     <script>
-        // Function to fetch and update the photo list
+        // Adjusted JS function for dynamic updates
         function fetchPhotos() {
-            fetch('/')
+            const albumName = '{{ folder }}'; // Use the template variable directly
+            fetch(`/view_album/${albumName}`) // Assuming you have a route to fetch the album's HTML
                 .then(response => response.text())
                 .then(html => {
                     var parser = new DOMParser();
                     var doc = parser.parseFromString(html, 'text/html');
-                    var newList = doc.querySelector('ul#photoList'); // Ensure the selector matches your list's ID
-                    document.querySelector('ul#photoList').innerHTML = newList.innerHTML;
+                    // Assume your fetched content wraps photos in a similar 'div.row' container
+                    var newContent = doc.querySelector('div.row').innerHTML;
+                    document.getElementById('photoList').innerHTML = newContent;
                 })
                 .catch(error => console.error('Error fetching photo list:', error));
         }
-    
-        // Fetch photos every 30 seconds
+
+        // Fetch updated photos periodically (30 seconds is 30000)
         setInterval(fetchPhotos, 30000);
-        </script>
-
-
+    </script>
 </body>
 </html>
