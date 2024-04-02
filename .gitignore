@@ -1,2 +1,5 @@
 venv/
 admin-password-inject.txt
+uploads/BCN/*
+uploads/wedding/*
+uploads/rehearsal/*

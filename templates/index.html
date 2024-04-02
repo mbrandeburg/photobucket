@@ -3,21 +3,47 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Photo Upload</title>
+    <title>Photo Albums</title>
+    <!-- Include Bootstrap CSS from CDN -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
 </head>
 <body>
-    <h1>Upload to Rehearsal Folder</h1>
-    <form action="/upload" method="post" enctype="multipart/form-data">
-        <input type="file" name="photo">
-        <input type="submit" value="Upload">
-    </form>
-    <h2>Available Photos</h2>
-    <ul>
-        {% for file in files %}
-            <li>
-                <a href="{{ url_for('uploaded_file', filename=file) }}">{{ file }}</a>
-            </li>
+    <div class="container mt-5">
+        <h1 class="mb-4">Photo Albums</h1>
+
+        {% for folder in photos.keys() %}
+        <div class="mb-3">
+            <!-- Use Bootstrap button classes for styling -->
+            <button class="btn btn-primary" type="button" data-toggle="collapse" data-target="#{{ folder }}-options" aria-expanded="false" aria-controls="{{ folder }}-options">
+                {{ folder.capitalize() }}
+            </button>
+            <div class="collapse" id="{{ folder }}-options">
+                <div class="card card-body mt-3">
+                    <form action="/upload/{{ folder }}" method="post" enctype="multipart/form-data" class="mb-3">
+                        <div class="custom-file">
+                            <input type="file" class="custom-file-input" name="photo" id="customFile{{ folder }}">
+                            <label class="custom-file-label" for="customFile{{ folder }}">Choose file</label>
+                        </div>
+                        <button type="submit" class="btn btn-success mt-2">Upload to {{ folder.capitalize() }}</button>
+                    </form>
+                    <button onclick="window.location.href='/view_album/{{ folder }}'" class="btn btn-info">View Album</button>
+                </div>
+            </div>
+        </div>
         {% endfor %}
-    </ul>
+
+        <div>
+            <a href="/admin" class="btn btn-secondary mt-4">Admin Login</a>
+        </div>
+    </div>
+
+    <!-- Include Bootstrap JS and its dependencies -->
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.2/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    <script>
+        // Bootstrap requires jQuery, Popper.js, and its own JavaScript to enable interactive components like collapse.
+        // This script tag includes those dependencies from a CDN.
+    </script>
 </body>
 </html>

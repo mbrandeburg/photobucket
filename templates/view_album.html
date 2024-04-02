@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>View Album</title>
+</head>
+<body>
+    <h1>Album: {{ folder.capitalize() }}</h1>
+    <div>
+        {% for file in files %}
+        <div>
+            <!-- Adjust the src path if you serve images from a different route -->
+            <img src="/uploads/{{ folder }}/{{ file }}" alt="{{ file }}" style="max-width: 200px; max-height: 200px;">
+            <div>
+                <a href="/download/{{ folder }}/{{ file }}">Download</a>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+    <a href="/">Back to Albums</a>
+</body>
+</html>

@@ -7,21 +7,17 @@
 </head>
 <body>
     <h1>Manage Photos</h1>
-    <ul>
-        {% for file in files %}
-            <li>
-                {{ file }}
-                - <a href="{{ url_for('delete_photo', filename=file) }}">Delete</a>
-            </li>
-        {% endfor %}
-    </ul>
-    <a href="/admin">Logout</a>
-    {% with messages = get_flashed_messages(with_categories=true) %}
-        {% if messages %}
-            {% for category, message in messages %}
-                <div>{{ message }}</div>
+    {% for folder in ['rehearsal', 'BCN', 'wedding'] %}
+        <h2>Photos in {{ folder }}</h2>
+        <ul>
+            {% for file in files[folder] %}
+                <li>
+                    {{ file }}
+                    - <a href="{{ url_for('delete_photo', folder_name=folder, filename=file) }}">Delete</a>
+                </li>
             {% endfor %}
-        {% endif %}
-    {% endwith %}
+        </ul>
+    {% endfor %}
+    <a href="/admin">Logout</a>
 </body>
 </html>

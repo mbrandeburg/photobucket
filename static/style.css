@@ -4,10 +4,26 @@ h1, h2          { margin: 0; }
 h1              { border-bottom: 2px solid #eee; }
 h2              { font-size: 1.2em; }
 
-/* plotly */
-.chart{
-  margin-top: 30px;
-  text-align: center;
+.album-button {
+  display: inline-block;
+  margin: 5px;
+  padding: 10px 20px;
+  cursor: pointer;
+  background-color: #4CAF50;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  font-size: 16px;
+}
+.album-options {
+  display: none;
+  margin-top: 10px;
+}
+.album-container:hover .album-button {
+  background-color: #45a049;
+}
+.album-container {
+  margin-bottom: 20px;
 }
 
 table.dataframe, .dataframe th, .dataframe td {
