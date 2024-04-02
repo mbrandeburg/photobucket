@@ -19,27 +19,46 @@
             {% endif %}
         {% endwith %}
         
-        <h1 class="mb-4">Photo Albums</h1>
+        <nav class="navbar sticky-top navbar-light bg-light">
+        <!-- <div class="container-fluid"> -->
+        <h1 class="mb-2">Lauren and Matthew's Photo Site</h1>
+        <!-- </div> -->
+        </nav>
 
-        {% for folder in photos.keys() %}
-        <div class="mb-3">
-            <button class="btn btn-primary" type="button" data-toggle="collapse" data-target="#{{ folder }}-options" aria-expanded="false" aria-controls="{{ folder }}-options">
-                {{ folder.capitalize() }}
-            </button>
-            <div class="collapse" id="{{ folder }}-options">
-                <div class="card card-body mt-3">
-                    <form action="/upload/{{ folder }}" method="post" enctype="multipart/form-data" class="mb-3">
-                        <div class="custom-file">
-                            <input type="file" class="custom-file-input" name="photo" id="customFile{{ folder }}" onchange="fileSelected('customFile{{ folder }}', 'labelFor{{ folder }}', 'uploadButton{{ folder }}')">
-                            <label class="custom-file-label" for="customFile{{ folder }}" id="labelFor{{ folder }}">Choose file</label>
+        <p></p>
+        <div class="container">
+            <h4 class="mb-2">Welcome to our Wedding Weekend</h4>
+            <h5 class="mb-4">Please view and share your photos here</h5>
+
+            {% for folder in photos.keys() %}
+            <div class="mb-3">
+                <button class="btn btn-primary" type="button" data-toggle="collapse" data-target="#{{ folder }}-options" aria-expanded="false" aria-controls="{{ folder }}-options">
+                    {{ folder.capitalize() }}
+                </button>
+                <div class="collapse" id="{{ folder }}-options">
+                    <div class="card card-body mt-3">
+                        {% if folder == 'wedding' %}
+                        <div class="alert alert-warning" role="alert">
+                            We will have a wonderful wedding photographer to capture the event. If you take photos, we ask you to please limit them and to enjoy the festivities.
                         </div>
-                        <button type="submit" id="uploadButton{{ folder }}" class="btn btn-success mt-2" disabled>Upload to {{ folder.capitalize() }}</button>
-                    </form>
-                    <button onclick="window.location.href='/view_album/{{ folder }}'" class="btn btn-primary btn-sm">View Album</button>
+                        {% elif folder == 'BCN' %}
+                        <div class="alert alert-primary" role="alert">
+                            You can place here any photos you would like to share from before or after the wedding.
+                        </div>
+                        {% endif %}
+                        <form action="/upload/{{ folder }}" method="post" enctype="multipart/form-data" class="mb-3">
+                            <div class="custom-file">
+                                <input type="file" class="custom-file-input" name="photo" id="customFile{{ folder }}" onchange="fileSelected('customFile{{ folder }}', 'labelFor{{ folder }}', 'uploadButton{{ folder }}')">
+                                <label class="custom-file-label" for="customFile{{ folder }}" id="labelFor{{ folder }}">Choose file</label>
+                            </div>
+                            <button type="submit" id="uploadButton{{ folder }}" class="btn btn-success mt-2" disabled>Upload to {{ folder.capitalize() }}</button>
+                        </form>
+                        <button onclick="window.location.href='/view_album/{{ folder }}'" class="btn btn-primary btn-sm">View Album</button>
+                    </div>
                 </div>
             </div>
+            {% endfor %}
         </div>
-        {% endfor %}
     </div>
 
     <script>

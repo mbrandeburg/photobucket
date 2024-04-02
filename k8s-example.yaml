@@ -41,7 +41,7 @@ spec:
         ports:
         - containerPort: 7043
         volumeMounts:
-        - mountPath: "/app/uploads"
+        - mountPath: "/mnt/uploads"
           name: photo-storage
       volumes:
       - name: photo-storage
