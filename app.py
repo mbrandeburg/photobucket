@@ -1,4 +1,4 @@
-from flask import Flask, request, render_template, send_from_directory, redirect, url_for, session, flash
+from flask import Flask, request, render_template, send_from_directory, redirect, url_for, session, flash, after_this_request
 from werkzeug.utils import secure_filename
 import os
 
@@ -7,7 +7,7 @@ app = Flask(__name__)
 app.config['SECRET_KEY'] = os.environ['PHOTOBUCKET_ADMIN']
 app.config['UPLOAD_FOLDER'] = 'uploads'
 app.config['ALLOWED_EXTENSIONS'] = {'png', 'jpg', 'jpeg', 'gif', 'heif', 'hevc', 'mp4', 'mov', 'avi'}
-app.config['SUBFOLDERS'] = ['rehearsal', 'BCN', 'wedding']
+app.config['SUBFOLDERS'] = ['BCN', 'rehearsal', 'wedding']
 
 # Helper function to check allowed file extensions
 def allowed_file(filename):
@@ -24,9 +24,7 @@ ensure_upload_folders_exist()
 
 # Helper function to check password
 def check_password(password):
-    with open('password.txt') as f:
-        stored_password = f.read().strip()
-    return password == stored_password
+    return password == app.config['SECRET_KEY']
 
 @app.route('/')
 def index():
@@ -64,17 +62,6 @@ def admin():
             flash('Incorrect password')
     return render_template('admin.html')
 
-@app.route('/view_album/<folder_name>')
-def view_album(folder_name):
-    if folder_name not in app.config['SUBFOLDERS']:
-        flash('Album does not exist.')
-        return redirect(url_for('index'))
-    
-    folder_path = os.path.join(app.config['UPLOAD_FOLDER'], folder_name)
-    files = os.listdir(folder_path)
-    return render_template('view_album.html', folder=folder_name, files=files)
-
-
 @app.route('/manage_photos')
 def manage_photos():
     if not session.get('authenticated'):
@@ -82,6 +69,22 @@ def manage_photos():
 
     files = {folder: os.listdir(os.path.join(app.config['UPLOAD_FOLDER'], folder)) for folder in app.config['SUBFOLDERS']}
     return render_template('manage_photos.html', files=files)
+
+@app.route('/uploads/<folder_name>/<filename>')
+def serve_image(folder_name, filename):
+    folder_path = os.path.join(app.config['UPLOAD_FOLDER'], folder_name)
+    return send_from_directory(folder_path, filename)
+
+@app.route('/download/<folder_name>/<filename>')
+def download_image(folder_name, filename):
+    folder_path = os.path.join(app.config['UPLOAD_FOLDER'], folder_name)
+    
+    @after_this_request
+    def set_download_headers(response):
+        response.headers['Content-Disposition'] = f'attachment; filename={filename}'
+        return response
+    
+    return send_from_directory(folder_path, filename, as_attachment=True)
 
 @app.route('/delete_photo/<folder_name>/<filename>')
 def delete_photo(folder_name, filename):
@@ -100,6 +103,18 @@ def delete_photo(folder_name, filename):
     else:
         flash('File not found')
     return redirect(url_for('manage_photos'))
+
+
+@app.route('/view_album/<folder_name>')
+def view_album(folder_name):
+    if folder_name not in app.config['SUBFOLDERS']:
+        flash('Album does not exist.')
+        return redirect(url_for('index'))
+    
+    folder_path = os.path.join(app.config['UPLOAD_FOLDER'], folder_name)
+    files = os.listdir(folder_path)
+    return render_template('view_album.html', folder=folder_name, files=files)
+
 
 if __name__ == '__main__':
     app.run(debug=True, port=7043)

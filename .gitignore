@@ -3,3 +3,5 @@ admin-password-inject.txt
 uploads/BCN/*
 uploads/wedding/*
 uploads/rehearsal/*
+.DS_Store
+__pycache__/

@@ -3,21 +3,38 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>View Album</title>
+    <title>View Album - {{ folder.capitalize() }}</title>
+    <!-- Optional: Include Bootstrap CSS for styling -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <!-- <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}"> -->
+
 </head>
 <body>
-    <h1>Album: {{ folder.capitalize() }}</h1>
-    <div>
-        {% for file in files %}
-        <div>
-            <!-- Adjust the src path if you serve images from a different route -->
-            <img src="/uploads/{{ folder }}/{{ file }}" alt="{{ file }}" style="max-width: 200px; max-height: 200px;">
-            <div>
-                <a href="/download/{{ folder }}/{{ file }}">Download</a>
+    <div class="container mt-5">
+        <h1 class="mb-4">Album: {{ folder.capitalize() }}</h1>
+        <div class="row">
+            {% for file in files %}
+            <div class="col-md-4 mb-4">
+                <div class="card">
+                    <img src="{{ url_for('serve_image', folder_name=folder, filename=file) }}" class="card-img-top" alt="{{ file }}" style="max-height: 200px; object-fit: contain;">
+                    <div class="card-body">
+                        <h5 class="card-title">{{ file }}</h5>
+                        <a href="{{ url_for('download_image', folder_name=folder, filename=file) }}" class="btn btn-primary">Download</a>
+                    </div>
+                </div>
             </div>
+            {% else %}
+            <div class="col">
+                <p>No photos in this album yet.</p>
+            </div>
+            {% endfor %}
         </div>
-        {% endfor %}
+        <a href="/" class="btn btn-secondary mt-3">Back to Albums</a>
     </div>
-    <a href="/">Back to Albums</a>
+
+    <!-- Optional: Include Bootstrap JS for any Bootstrap components you use -->
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.2/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
 </body>
 </html>
