@@ -18,4 +18,4 @@ COPY --chown=worker:worker . .
 EXPOSE 7043
 
 ENTRYPOINT ["python3"]
-CMD ["app.py"]
+CMD ["app.py", "--mode", "main"]
