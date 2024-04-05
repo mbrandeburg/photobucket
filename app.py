@@ -72,34 +72,32 @@ def upload_file(folder_name):
     logging.info(f'File {filename} was uploaded successfully')
     return redirect(url_for('index'))
 
-@app.route('/admin', methods=['GET', 'POST'])
-def admin():
+@app.route('/admin/<folder_name>', methods=['GET', 'POST'])
+def admin(folder_name):
     if request.method == 'POST':
         if check_password(request.form['password']):
             session['authenticated'] = True
             logging.info('Admin login accepted')
-            return redirect(url_for('manage_photos'))
+            return redirect(url_for('manage_photos', folder_name=folder_name))
         else:
             flash('Incorrect password', 'danger')
             logging.warn('Attempted to log into Admin console with wrong password -- not allowed')
-    return render_template('admin.html')
+    return render_template('admin.html', folder=folder_name)
 
-@app.route('/manage_photos')
-def manage_photos():
+@app.route('/manage_photos/<folder_name>')
+def manage_photos(folder_name):
     if not session.get('authenticated'):
-        return redirect(url_for('admin'))
+        return redirect(url_for('admin', folder_name=folder_name))
 
-    # files = {folder: os.listdir(os.path.join(app.config['UPLOAD_FOLDER'], folder)) for folder in app.config['SUBFOLDERS']}
-    # return render_template('manage_photos.html', files=files)
-    files = {}
-    for folder in app.config['SUBFOLDERS']:
-        folder_path = os.path.join(app.config['UPLOAD_FOLDER'], folder)
-        # List files and sort them by modification time, most recent first
-        files_in_folder = os.listdir(folder_path)
-        files_in_folder.sort(key=lambda file: os.path.getmtime(os.path.join(folder_path, file)), reverse=True)
-        files[folder] = files_in_folder
+    # logging.info(f'folder is: {folder_name}')
+    folder_path = os.path.join(app.config['UPLOAD_FOLDER'], folder_name)
+    # logging.info(f'folder path is: {folder_path}')
+    files = os.listdir(folder_path)
+    # logging.info(f'files are: {files}')
+    # exit(0)
+    files.sort(key=lambda file: os.path.getmtime(os.path.join(folder_path, file)), reverse=True)
 
-    return render_template('manage_photos.html', files=files)
+    return render_template('manage_photos.html', folder=folder_name, files=files)
 
 @app.route('/uploads/<folder_name>/<filename>')
 def serve_image(folder_name, filename):
@@ -121,11 +119,11 @@ def download_image(folder_name, filename):
 def delete_photo(folder_name, filename):
     if not session.get('authenticated'):
         flash('You need to login first', 'danger')
-        return redirect(url_for('admin'))
+        return redirect(url_for('admin', folder_name=folder_name))
 
     if folder_name not in app.config['SUBFOLDERS']:
         flash('Folder not allowed', 'danger')
-        return redirect(url_for('manage_photos'))
+        return redirect(url_for('manage_photos', folder_name=folder_name))
 
     file_path = os.path.join(app.config['UPLOAD_FOLDER'], folder_name, filename)
     if os.path.exists(file_path):
@@ -134,7 +132,7 @@ def delete_photo(folder_name, filename):
         logging.info(f'Successfully deleted {filename} from {folder_name}')
     else:
         flash('File not found', 'danger')
-    return redirect(url_for('manage_photos'))
+    return redirect(url_for('manage_photos', folder_name=folder_name))
 
 
 @app.route('/view_album/<folder_name>')

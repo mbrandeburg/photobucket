@@ -20,37 +20,35 @@
         {% endif %}
         {% endwith %}
 
-        <h1 class="mb-4">Manage Photos</h1>
-        {% for folder, files in files.items() %}
-        <div class="mb-3">
-            {% if folder == 'BCN' %}
-                <h2>{{ folder }}</h2>
-            {% else %}
-                <h2>{{ folder.capitalize() }}</h2>
-            {% endif %}
-            
-            {% if files %}
-            <div class="row">
-                {% for file in files %}
-                <div class="col-md-4 mb-4">
-                    <div class="card">
-                        <img src="{{ url_for('serve_image', folder_name=folder, filename=file) }}" class="card-img-top" alt="{{ file }}" style="max-height: 200px; object-fit: contain;">
-                        <div class="card-body">
-                            <h5 class="card-title">{{ file }}</h5>
-                            <!-- <a href="{{ url_for('delete_photo', folder_name=folder, filename=file) }}" class="btn btn-danger">Delete</a> -->
-                            <button class="btn btn-danger delete-btn" data-photo-name="{{ file }}" data-folder-name="{{ folder }}" data-delete-url="{{ url_for('delete_photo', folder_name=folder, filename=file) }}">Delete</button>
-                        </div>
-                    </div>
+        <!-- <div class="container mt-5"> -->
+            <a href="/" class="btn btn-secondary mt-3">Back to Albums</a>
+        <!-- </div> -->
+
+        {% if folder == 'BCN' %}
+        <h1 class="mb-4">Manage Photos for {{ folder }}</h1>
+        {% else %}
+        <h1 class="mb-4">Manage Photos for {{ folder.capitalize() }}</h1>
+        {% endif %}
+
+       <!-- Photos are displayed here -->
+       <div class="row" id="photoList"> <!-- Update this ID to match the JS function -->
+        {% for file in files %}
+        <div class="col-md-4 mb-4">
+            <div class="card">
+                <img src="{{ url_for('serve_image', folder_name=folder, filename=file) }}" class="card-img-top" alt="{{ file }}" style="max-height: 200px; object-fit: contain;">
+                <div class="card-body">
+                    <h5 class="card-title">{{ file }}</h5>
+                    <!-- <a href="{{ url_for('delete_photo', folder_name=folder, filename=file) }}" class="btn btn-danger">Delete</a> -->
+                    <button class="btn btn-danger delete-btn" data-photo-name="{{ file }}" data-folder-name="{{ folder }}" data-delete-url="{{ url_for('delete_photo', folder_name=folder, filename=file) }}">Delete</button>
                 </div>
-                {% endfor %}
             </div>
-            {% else %}
-            <p>No photos in this album.</p>
-            {% endif %}
+        </div>
+        {% else %}
+        <div class="col">
+            <p>No photos in this album yet.</p>
         </div>
         {% endfor %}
-        <a href="/" class="btn btn-secondary mt-3">Back to Albums</a>
-    </div>
+       </div>
 
 
     <script>
