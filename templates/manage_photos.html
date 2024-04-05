@@ -27,7 +27,8 @@
                         <img src="{{ url_for('serve_image', folder_name=folder, filename=file) }}" class="card-img-top" alt="{{ file }}" style="max-height: 200px; object-fit: contain;">
                         <div class="card-body">
                             <h5 class="card-title">{{ file }}</h5>
-                            <a href="{{ url_for('delete_photo', folder_name=folder, filename=file) }}" class="btn btn-danger">Delete</a>
+                            <!-- <a href="{{ url_for('delete_photo', folder_name=folder, filename=file) }}" class="btn btn-danger">Delete</a> -->
+                            <button class="btn btn-danger delete-btn" data-photo-name="{{ file }}" data-folder-name="{{ folder }}" data-delete-url="{{ url_for('delete_photo', folder_name=folder, filename=file) }}">Delete</button>
                         </div>
                     </div>
                 </div>
@@ -40,6 +41,23 @@
         {% endfor %}
         <a href="/" class="btn btn-secondary mt-3">Back to Albums</a>
     </div>
+
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+          // Add click event listener to all delete buttons
+          document.querySelectorAll('.delete-btn').forEach(button => {
+            button.addEventListener('click', function(event) {
+              const deleteUrl = event.currentTarget.getAttribute('data-delete-url');
+              const photoName = event.currentTarget.getAttribute('data-photo-name');
+              const folderName = event.currentTarget.getAttribute('data-folder-name');
+              if (confirm('Are you sure you want to delete '+photoName+' in '+folderName+'?')) {
+                window.location.href = deleteUrl;
+              }
+            });
+          });
+        });
+    </script>
 
     <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.2/dist/umd/popper.min.js"></script>
