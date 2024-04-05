@@ -89,15 +89,16 @@ def manage_photos(folder_name):
     if not session.get('authenticated'):
         return redirect(url_for('admin', folder_name=folder_name))
 
-    # logging.info(f'folder is: {folder_name}')
-    folder_path = os.path.join(app.config['UPLOAD_FOLDER'], folder_name)
-    # logging.info(f'folder path is: {folder_path}')
-    files = os.listdir(folder_path)
-    # logging.info(f'files are: {files}')
-    # exit(0)
-    files.sort(key=lambda file: os.path.getmtime(os.path.join(folder_path, file)), reverse=True)
+    page = request.args.get('page', 1, type=int)
+    per_page = 10
 
-    return render_template('manage_photos.html', folder=folder_name, files=files)
+    folder_path = os.path.join(app.config['UPLOAD_FOLDER'], folder_name)
+    files = os.listdir(folder_path)
+    files.sort(key=lambda file: os.path.getmtime(os.path.join(folder_path, file)), reverse=True)
+    total_files = len(files)
+    files_to_show = files[(page-1)*per_page : page*per_page]
+
+    return render_template('manage_photos.html', folder=folder_name, files=files_to_show, total_files=total_files, page=page, per_page=per_page)
 
 @app.route('/uploads/<folder_name>/<filename>')
 def serve_image(folder_name, filename):
@@ -142,11 +143,16 @@ def view_album(folder_name):
         logging.warn(f'Album does not exist: {folder_name}')
         return redirect(url_for('index'))
 
+    page = request.args.get('page', 1, type=int)
+    per_page = 10
+
     folder_path = os.path.join(app.config['UPLOAD_FOLDER'], folder_name)
     files = os.listdir(folder_path)
     files.sort(key=lambda file: os.path.getmtime(os.path.join(folder_path, file)), reverse=True)
+    total_files = len(files)
+    files_to_show = files[(page-1)*per_page : page*per_page]
 
-    return render_template('view_album.html', folder=folder_name, files=files)
+    return render_template('view_album.html', folder=folder_name, files=files_to_show, total_files=total_files, page=page, per_page=per_page)
 
 
 if __name__ == '__main__':
