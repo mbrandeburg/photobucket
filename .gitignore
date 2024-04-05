@@ -1,7 +1,5 @@
 venv/
 admin-password-inject.txt
-uploads/BCN/*
-uploads/wedding/*
-uploads/rehearsal/*
+uploads/*
 .DS_Store
 __pycache__/
