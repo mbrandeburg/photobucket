@@ -114,49 +114,48 @@
             var form = document.getElementById('uploadForm' + folder);
             var formData = new FormData(form);
             var xhr = new XMLHttpRequest();
-        
-            // Progress bar element
             var progressBar = document.getElementById('progressBar' + folder);
-            document.querySelector('.progress').style.display = 'block'; // Show the progress bar
+            progressBar.closest('.progress').style.display = 'block'; // Show the progress bar
         
             xhr.open('POST', form.action, true);
         
             xhr.upload.onprogress = function(e) {
                 if (e.lengthComputable) {
-                    var percentComplete = (e.loaded / e.total) * 100;
+                    var percentComplete = Math.round((e.loaded / e.total) * 100);
                     progressBar.style.width = percentComplete + '%';
                     progressBar.setAttribute('aria-valuenow', percentComplete);
+                    progressBar.innerHTML = percentComplete + '%'; // Display percentage on the bar for visual feedback
                 }
             };
         
             xhr.onload = function() {
                 if (xhr.status == 200) {
-                    progressBar.style.width = '100%'; // Complete the progress
+                    progressBar.style.width = '100%';
                     alert('Upload complete!');
-                    window.location.reload(); // Optionally refresh the page or redirect
+                    window.location.reload();
                 } else {
-                    alert('An error occurred during the upload. Please try again.');
+                    alert('Upload failed. Server responded with status: ' + xhr.status);
                 }
-                document.querySelector('.progress').style.display = 'none'; // Hide the progress bar after upload
+                progressBar.closest('.progress').style.display = 'none'; // Hide the progress bar after upload
             };
         
             xhr.onerror = function() {
-                alert('An error occurred during the upload. Please try again.');
-                document.querySelector('.progress').style.display = 'none'; // Hide the progress bar on error
+                alert('An error occurred during the upload.');
+                progressBar.closest('.progress').style.display = 'none';
             };
         
             xhr.send(formData);
         }
         
-        // Change the form submission handler
         document.querySelectorAll('[id^="uploadForm"]').forEach(form => {
             form.addEventListener('submit', function(event) {
-                event.preventDefault(); // Prevent normal form submission
+                event.preventDefault();
                 var folder = this.id.replace('uploadForm', '');
                 uploadFile(folder);
             });
         });
         </script>
+        
         
 </body>
 </html>
