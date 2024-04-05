@@ -1,8 +1,10 @@
-from flask import Flask, request, render_template, send_from_directory, redirect, url_for, session, flash, after_this_request
-from werkzeug.utils import secure_filename
-import os
 import argparse
+from flask import Flask, request, render_template, send_from_directory, redirect, url_for, session, flash, after_this_request
 import logging
+import os
+import secrets
+from werkzeug.utils import secure_filename
+
 
 # Parse command-line arguments for mode
 parser = argparse.ArgumentParser(description='Run the Flask app in test or main mode.')
@@ -65,7 +67,10 @@ def upload_file(folder_name):
         logging.warn(f"Attempted to upload an non-allowed file type: {filename.rsplit('.', 1)[1].lower()}")
         return redirect(url_for('index'))
 
-    filename = secure_filename(file.filename)
+    # Adding prefix to avoid file name collision
+    random_prefix = secrets.token_urlsafe(4)  # Generate a short prefix, was token_hex for random hexadecimal but thought urlsafe() might be better
+    # filename = secure_filename(file.filename)
+    filename = secure_filename(f"{random_prefix}-{file.filename}") 
     save_path = os.path.join(app.config['UPLOAD_FOLDER'], folder_name, filename)
     file.save(save_path)
     flash(f'File {filename} was uploaded successfully', 'success')  # Flash success message
