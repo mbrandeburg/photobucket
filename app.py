@@ -49,32 +49,57 @@ def index():
     photos = {folder: os.listdir(os.path.join(app.config['UPLOAD_FOLDER'], folder)) for folder in app.config['SUBFOLDERS']}
     return render_template('index.html', photos=photos)
 
+# Singular upload approach
+# @app.route('/upload/<folder_name>', methods=['POST'])
+# def upload_file(folder_name):
+#     if folder_name not in app.config['SUBFOLDERS']:
+#         flash('Folder not allowed', 'danger')
+#         logging.warn('Attempted to upload a folder -- not allowed')
+#         return redirect(url_for('index'))
+
+#     if 'photo' not in request.files:
+#         flash('No file part', 'danger')
+#         logging.warn('Attempted to upload without a file -- not allowed')
+#         return redirect(url_for('index'))
+
+#     file = request.files['photo']
+#     if file.filename == '' or not allowed_file(file.filename):
+#         flash('No selected file or file type not allowed', 'danger')
+#         logging.warn(f"Attempted to upload an non-allowed file type: {filename.rsplit('.', 1)[1].lower()}")
+#         return redirect(url_for('index'))
+
+#     # Adding prefix to avoid file name collision
+#     random_prefix = secrets.token_urlsafe(4)  # Generate a short prefix, was token_hex for random hexadecimal but thought urlsafe() might be better
+#     # filename = secure_filename(file.filename)
+#     filename = secure_filename(f"{random_prefix}-{file.filename}") 
+#     save_path = os.path.join(app.config['UPLOAD_FOLDER'], folder_name, filename)
+#     file.save(save_path)
+#     flash(f'File {filename} was uploaded successfully', 'success')  # Flash success message
+#     logging.info(f'File {filename} was uploaded successfully')
+#     return redirect(url_for('index'))
+
+# Improved for batch
 @app.route('/upload/<folder_name>', methods=['POST'])
 def upload_file(folder_name):
-    if folder_name not in app.config['SUBFOLDERS']:
-        flash('Folder not allowed', 'danger')
-        logging.warn('Attempted to upload a folder -- not allowed')
+    uploaded_files = request.files.getlist('photos')  # Adjusted to handle multiple files
+    if not uploaded_files:
+        flash('No files selected!', 'danger')
         return redirect(url_for('index'))
 
-    if 'photo' not in request.files:
-        flash('No file part', 'danger')
-        logging.warn('Attempted to upload without a file -- not allowed')
-        return redirect(url_for('index'))
+    for file in uploaded_files:
+        if file and allowed_file(file.filename):
+                # Adding prefix to avoid file name collision
+            random_prefix = secrets.token_urlsafe(4)  # Generate a short prefix, was token_hex for random hexadecimal but thought urlsafe() might be better
+            # filename = secure_filename(file.filename)
+            filename = secure_filename(f"{random_prefix}-{file.filename}") 
+            file.save(os.path.join(app.config['UPLOAD_FOLDER'], folder_name, filename))
+            logging.info(f'File {filename} was uploaded successfully')
+        else:
+            flash('Invalid file type!', 'danger')
+            return redirect(url_for('index'))
 
-    file = request.files['photo']
-    if file.filename == '' or not allowed_file(file.filename):
-        flash('No selected file or file type not allowed', 'danger')
-        logging.warn(f"Attempted to upload an non-allowed file type: {filename.rsplit('.', 1)[1].lower()}")
-        return redirect(url_for('index'))
-
-    # Adding prefix to avoid file name collision
-    random_prefix = secrets.token_urlsafe(4)  # Generate a short prefix, was token_hex for random hexadecimal but thought urlsafe() might be better
-    # filename = secure_filename(file.filename)
-    filename = secure_filename(f"{random_prefix}-{file.filename}") 
-    save_path = os.path.join(app.config['UPLOAD_FOLDER'], folder_name, filename)
-    file.save(save_path)
-    flash(f'File {filename} was uploaded successfully', 'success')  # Flash success message
-    logging.info(f'File {filename} was uploaded successfully')
+    flash('Files uploaded successfully!', 'success')
+    logging.info(f'All Files uploaded successfully')
     return redirect(url_for('index'))
 
 @app.route('/admin/<folder_name>', methods=['GET', 'POST'])

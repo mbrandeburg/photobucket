@@ -63,13 +63,17 @@
                             {% endif %}
                         </form> -->
 
-                        <!-- Form with file input and progress bar -->
+                        <!-- Form for multiple file uploads -->
                         <form id="uploadForm{{ folder }}" action="/upload/{{ folder }}" method="post" enctype="multipart/form-data" class="mb-3">
                             <div class="custom-file">
-                                <input type="file" class="custom-file-input" name="photo" id="customFile{{ folder }}" onchange="fileSelected('customFile{{ folder }}', 'labelFor{{ folder }}', 'uploadButton{{ folder }}')">
-                                <label class="custom-file-label" for="customFile{{ folder }}" id="labelFor{{ folder }}">Choose file</label>
+                                <input type="file" class="custom-file-input" name="photos" id="customFile{{ folder }}" multiple onchange="fileSelected('customFile{{ folder }}', 'labelFor{{ folder }}', 'uploadButton{{ folder }}')">
+                                <label class="custom-file-label" for="customFile{{ folder }}" id="labelFor{{ folder }}">Choose files</label>
                             </div>
-                            <button type="submit" id="uploadButton{{ folder }}" class="btn btn-success mt-2" disabled>Upload to {{ folder.capitalize() }}</button>
+                            {% if folder == 'BCN' %}
+                                <button type="submit" id="uploadButton{{ folder }}" class="btn btn-success mt-2" disabled>Upload to {{ folder }}</button>
+                            {% else %}
+                                <button type="submit" id="uploadButton{{ folder }}" class="btn btn-success mt-2" disabled>Upload to {{ folder.capitalize() }}</button>
+                            {% endif %}
                         </form>
 
                         <!-- Progress Bar -->
@@ -86,7 +90,8 @@
         </div>
     </div>
 
-    <script>
+    <!-- singular version -->
+    <!-- <script>
         // Function to enable the upload button and display the filename
         function fileSelected(fileInputId, labelId, uploadButtonId) {
             const fileInput = document.getElementById(fileInputId);
@@ -102,7 +107,24 @@
                 uploadButton.disabled = true; // Keep the upload button disabled if no file is selected
             }
         }
-    </script>
+    </script> -->
+
+    <!-- batch version -->
+    <script>
+        function fileSelected(fileInputId, labelId, uploadButtonId) {
+            const fileInput = document.getElementById(fileInputId);
+            const label = document.getElementById(labelId);
+            const uploadButton = document.getElementById(uploadButtonId);
+    
+            if (fileInput.files.length > 0) {
+                label.textContent = fileInput.files.length + ' file(s) selected'; // Update to show number of files
+                uploadButton.disabled = false;
+            } else {
+                label.textContent = "Choose files";
+                uploadButton.disabled = true;
+            }
+        }
+        </script>
 
 
     <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
