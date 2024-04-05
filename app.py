@@ -89,7 +89,16 @@ def manage_photos():
     if not session.get('authenticated'):
         return redirect(url_for('admin'))
 
-    files = {folder: os.listdir(os.path.join(app.config['UPLOAD_FOLDER'], folder)) for folder in app.config['SUBFOLDERS']}
+    # files = {folder: os.listdir(os.path.join(app.config['UPLOAD_FOLDER'], folder)) for folder in app.config['SUBFOLDERS']}
+    # return render_template('manage_photos.html', files=files)
+    files = {}
+    for folder in app.config['SUBFOLDERS']:
+        folder_path = os.path.join(app.config['UPLOAD_FOLDER'], folder)
+        # List files and sort them by modification time, most recent first
+        files_in_folder = os.listdir(folder_path)
+        files_in_folder.sort(key=lambda file: os.path.getmtime(os.path.join(folder_path, file)), reverse=True)
+        files[folder] = files_in_folder
+
     return render_template('manage_photos.html', files=files)
 
 @app.route('/uploads/<folder_name>/<filename>')
@@ -137,6 +146,8 @@ def view_album(folder_name):
 
     folder_path = os.path.join(app.config['UPLOAD_FOLDER'], folder_name)
     files = os.listdir(folder_path)
+    files.sort(key=lambda file: os.path.getmtime(os.path.join(folder_path, file)), reverse=True)
+
     return render_template('view_album.html', folder=folder_name, files=files)
 
 
