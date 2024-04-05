@@ -14,9 +14,23 @@
         <!-- Back to Albums button -->
         <a href="/" class="btn btn-secondary mt-3">Back to Albums</a>
         <p></p>
+        <!-- Help button -->
+        <button class="btn btn-danger" onclick="toggleHelpText()">Help</button>
+                <!-- Paragraph to hold help text, initially hidden -->
+                <p></p>
+                <p id="helpText" class="alert alert-info" style="display: none;">If you are on an iPhone, the download button saves to "Downloads" in the Files app, but from the Files app, you can also save any image to your Photos app. Because of this, it is best recommended to long press -- push on a photo for a few seconds -- which will cause the image to "pop out" and give you the choice to "Save to Photos" directly, by-passing the previous steps.</p>
+        <p></p>
         <!-- Refresh Page button -->
         <button class="btn btn-primary" onclick="window.location.reload();">Refresh Page</button>
         <p></p>
+
+        <!-- If you are using an iPhone, long press a photo then click "Save to Photos". -->
+        <div class="alert alert-info alert-dismissible fade show" role="alert">
+            If you are using an iPhone, long press a photo then click "Save to Photos"
+            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+            </button>
+        </div>
 
         {% if folder == 'BCN' %}
             <h1 class="mb-4">Album: {{ folder }}</h1>
@@ -73,6 +87,19 @@
     <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.2/dist/umd/popper.min.js"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+   
+   <!-- help button script -->
+   <script>
+        function toggleHelpText() {
+            var helpText = document.getElementById("helpText");
+            if (helpText.style.display === "none") {
+                helpText.style.display = "block";  // Show the help text
+            } else {
+                helpText.style.display = "none";  // Hide the help text
+            }
+        }
+    </script>
+        
 
     <script>
         // Adjusted JS function for dynamic updates

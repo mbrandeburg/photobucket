@@ -118,7 +118,8 @@ def download_image(folder_name, filename):
     def set_download_headers(response):
         response.headers['Content-Disposition'] = f'attachment; filename={filename}'
         return response
-    
+
+    # flash('If you are using an iPhone, you can find your downloaded image in the Files app. From there, you can save it to your Photos app.', 'info')
     return send_from_directory(folder_path, filename, as_attachment=True)
 
 @app.route('/delete_photo/<folder_name>/<filename>')
