@@ -50,12 +50,12 @@ def index():
 @app.route('/upload/<folder_name>', methods=['POST'])
 def upload_file(folder_name):
     if folder_name not in app.config['SUBFOLDERS']:
-        flash('Folder not allowed')
+        flash('Folder not allowed', 'danger')
         logging.warn('Attempted to upload a folder -- not allowed')
         return redirect(url_for('index'))
 
     if 'photo' not in request.files:
-        flash('No file part')
+        flash('No file part', 'danger')
         logging.warn('Attempted to upload without a file -- not allowed')
         return redirect(url_for('index'))
 
@@ -80,7 +80,7 @@ def admin():
             logging.info('Admin login accepted')
             return redirect(url_for('manage_photos'))
         else:
-            flash('Incorrect password')
+            flash('Incorrect password', 'danger')
             logging.warn('Attempted to log into Admin console with wrong password -- not allowed')
     return render_template('admin.html')
 
@@ -111,29 +111,30 @@ def download_image(folder_name, filename):
 @app.route('/delete_photo/<folder_name>/<filename>')
 def delete_photo(folder_name, filename):
     if not session.get('authenticated'):
-        flash('You need to login first')
+        flash('You need to login first', 'danger')
         return redirect(url_for('admin'))
 
     if folder_name not in app.config['SUBFOLDERS']:
-        flash('Folder not allowed')
+        flash('Folder not allowed', 'danger')
         return redirect(url_for('manage_photos'))
 
     file_path = os.path.join(app.config['UPLOAD_FOLDER'], folder_name, filename)
     if os.path.exists(file_path):
         os.remove(file_path)
-        flash(f'Successfully deleted {filename} from {folder_name}')
+        flash(f'Successfully deleted {filename} from {folder_name}', 'success')
         logging.info(f'Successfully deleted {filename} from {folder_name}')
     else:
-        flash('File not found')
+        flash('File not found', 'danger')
     return redirect(url_for('manage_photos'))
 
 
 @app.route('/view_album/<folder_name>')
 def view_album(folder_name):
     if folder_name not in app.config['SUBFOLDERS']:
-        flash('Album does not exist.')
+        flash('Album does not exist.', 'danger')
+        logging.warn(f'Album does not exist: {folder_name}')
         return redirect(url_for('index'))
-    
+
     folder_path = os.path.join(app.config['UPLOAD_FOLDER'], folder_name)
     files = os.listdir(folder_path)
     return render_template('view_album.html', folder=folder_name, files=files)
